@@ -1245,7 +1245,56 @@ rich.AssetPicker.prototype = {
 var assetPicker = new rich.AssetPicker();
 // 
 
+// Paste Image From Clipboard
+var addInlineAttachmentMarkupOrg = null;
+var pasteImageThis = null;
 
+function copyImageFromClipboardCKEditor(e) {
+    var clipboardData = e.clipboardData || e.originalEvent.clipboardData
+    if (!clipboardData) {
+        return;
+    }
+    if (clipboardData.types.some(function (t) {
+        return /^text\/plain$/.test(t);
+    })) {
+        return;
+    }
 
+    pasteImageThis = this;
+    var files = clipboardData.files
+    for (var i = 0; i < files.length; i++) {
+        var file = files[i];
+        if (file.type.indexOf("image") != -1) {
+            var date = new Date();
+            var filename = 'clipboard-'
+                + date.getFullYear()
+                + ('0' + (date.getMonth() + 1)).slice(-2)
+                + ('0' + date.getDate()).slice(-2)
+                + ('0' + date.getHours()).slice(-2)
+                + ('0' + date.getMinutes()).slice(-2)
+                + '-' + randomKey(5).toLocaleLowerCase()
+                + '.' + file.name.split('.').pop();
 
-;
+            // get input file in the closest form
+            var inputEl = $('form').find('input:file.filedrop');
+            handleFileDropEvent.target = e.target;
+            addFile(inputEl, new File([file], filename, {type: file.type}), true);
+            console.log(addFile.nextAttachmentId);
+        }
+    }
+}
+
+function addInlineAttachmentMarkupCKEditor(file) {
+    if (pasteImageThis != null) {
+        var attachmentFileID = $('#new-attachments').find('.token').slice(-1)[0].value.split('.')[0];
+        if(attachmentFileID) {
+            var img_text = '<img src="/attachments/download/' + attachmentFileID + '" />'
+
+            var dt = new DataTransfer();
+            dt.items.add(img_text, 'text/html');
+            var pasteEvent = new ClipboardEvent('paste', {clipboardData: dt});
+            pasteImageThis.dispatchEvent(pasteEvent);
+        }
+    }
+    // addInlineAttachmentMarkupOrg(file);
+}

@@ -72,7 +72,7 @@
     var selected = to.find("option:selected").first();
     from.find("option:selected").remove().each(function() {
       if (this.value == '-' || this.value == '--' || this.value == '/') return;
-      selected.size() ? selected.before(this) : to.append(this);
+      selected.length ? selected.before(this) : to.append(this);
     });
     to.prop("selectedIndex", -1);
     changeHandler();
@@ -82,7 +82,7 @@
     var option = $("<option/>").val(item).text(item);
     var to = $("#right");
     var selected = to.find("option:selected").first();
-    selected.size() ? selected.before(option) : to.append(option);
+    selected.length ? selected.before(option) : to.append(option);
     changeHandler();
   }
 

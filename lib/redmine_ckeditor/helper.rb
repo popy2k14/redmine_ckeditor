@@ -31,6 +31,16 @@ module RedmineCkeditor
             CKEDITOR.instances[id].resetDirty();
           }
         });
+        setTimeout(function() {
+          addInlineAttachmentMarkupOrg = addInlineAttachmentMarkup;
+          addInlineAttachmentMarkup = addInlineAttachmentMarkupCKEditor;
+          $('iframe').contents().find('.wiki').on("paste", copyImageFromClipboardCKEditor);
+        }, 2000);
+        $(document).on("click", ".cke_button__source", function(){
+          setTimeout(function() {
+            $('iframe').contents().find('.wiki').on("paste", copyImageFromClipboardCKEditor);
+          }, 2000);
+        });
       EOT
     end
   end
