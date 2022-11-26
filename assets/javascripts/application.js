@@ -1285,16 +1285,36 @@ function copyImageFromClipboardCKEditor(e) {
 }
 
 function addInlineAttachmentMarkupCKEditor(file) {
-    if (pasteImageThis != null) {
-        var attachmentFileID = $('#new-attachments').find('.token').slice(-1)[0].value.split('.')[0];
-        if(attachmentFileID) {
-            var img_text = '<img src="/attachments/download/' + attachmentFileID + '" />'
+    var new_attachment = $('#new-attachments').find('.token').slice(-1)[0]
+    var attachmentFileID = new_attachment.value.split('.')[0];
+    if(attachmentFileID) {
+        var a_tag = $('<a class="icon-only icon-copy" title="copy" href="/attachments/download/'+
+            attachmentFileID+'" onclick="copyAttachmentURL('+
+            attachmentFileID+');return false;"></a>');
+        var new_filename = $('#new-attachments').find('.filename').slice(-1)[0]
+        new_filename.after(a_tag[0]);
+
+        if (pasteImageThis) {
+            var base_url = $('a.home').prop('href');
+            var img_text = '<img src="'+base_url+'attachments/download/' + attachmentFileID + '" />'
 
             var dt = new DataTransfer();
             dt.items.add(img_text, 'text/html');
             var pasteEvent = new ClipboardEvent('paste', {clipboardData: dt});
             pasteImageThis.dispatchEvent(pasteEvent);
         }
+        pasteImageThis = null;
     }
     // addInlineAttachmentMarkupOrg(file);
+}
+
+function copyAttachmentURL(id) {
+    var base_url = $('a.home').prop('href');
+    var text_data = base_url+'attachments/download/'+id;
+    var html_data = '<img src="'+base_url+'attachments/download/' + id + '" />';
+    var item = new ClipboardItem({
+        'text/plain': new Blob([text_data], { type: 'text/plain' }),
+        'text/html': new Blob([html_data], { type: 'text/html' })
+    });
+    navigator.clipboard.write([item]);
 }

@@ -35,6 +35,15 @@ module RedmineCkeditor
           addInlineAttachmentMarkupOrg = addInlineAttachmentMarkup;
           addInlineAttachmentMarkup = addInlineAttachmentMarkupCKEditor;
           $('iframe').contents().find('.wiki').on("paste", copyImageFromClipboardCKEditor);
+
+          $('.icon-download').each(function(){
+            m = $(this).attr('href').match(new RegExp('/attachments/download/(.+)/'));
+            if(m) {
+              a_tag = $('<a class="icon-only icon-copy" title="copy" href="/attachments/download/'+m[1]+
+                        '" onclick="copyAttachmentURL('+m[1]+');return false;"></a>');
+              $(this).before(a_tag[0]);
+             }
+          });
         }, 2000);
         $(document).on("click", ".cke_button__source", function(){
           setTimeout(function() {
