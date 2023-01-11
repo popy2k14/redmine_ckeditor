@@ -1202,11 +1202,11 @@ delete CKEDITOR.dtd.$removeEmpty['i'];
 
 var rich = rich || {};
 rich.AssetPicker = function(){
-	
+
 };
 
 rich.AssetPicker.prototype = {
-	
+
 	showFinder: function(dom_id, options){
 		// open a popup
 		var params = {};
@@ -1243,11 +1243,21 @@ rich.AssetPicker.prototype = {
 
 // Rich Asset input
 var assetPicker = new rich.AssetPicker();
-// 
+//
 
 // Paste Image From Clipboard
 var addInlineAttachmentMarkupOrg = null;
 var pasteImageThis = null;
+function copyImageFromDrop(e){
+
+    var dt = e.dataTransfer
+    var files = dt.files
+    files = [...files]
+
+    pasteImageThis = this;
+    var files = dt.files
+    addFileToAttachFile(e,files)
+}
 
 function copyImageFromClipboardCKEditor(e) {
     var clipboardData = e.clipboardData || e.originalEvent.clipboardData
@@ -1262,26 +1272,7 @@ function copyImageFromClipboardCKEditor(e) {
 
     pasteImageThis = this;
     var files = clipboardData.files
-    for (var i = 0; i < files.length; i++) {
-        var file = files[i];
-        if (file.type.indexOf("image") != -1) {
-            var date = new Date();
-            var filename = 'clipboard-'
-                + date.getFullYear()
-                + ('0' + (date.getMonth() + 1)).slice(-2)
-                + ('0' + date.getDate()).slice(-2)
-                + ('0' + date.getHours()).slice(-2)
-                + ('0' + date.getMinutes()).slice(-2)
-                + '-' + randomKey(5).toLocaleLowerCase()
-                + '.' + file.name.split('.').pop();
-
-            // get input file in the closest form
-            var inputEl = $('form').find('input:file.filedrop');
-            handleFileDropEvent.target = e.target;
-            addFile(inputEl, new File([file], filename, {type: file.type}), true);
-            console.log(addFile.nextAttachmentId);
-        }
-    }
+    addFileToAttachFile(e,files)
 }
 
 function addInlineAttachmentMarkupCKEditor(file) {
@@ -1309,6 +1300,29 @@ function addInlineAttachmentMarkupCKEditor(file) {
         }
     })
     // addInlineAttachmentMarkupOrg(file);
+}
+
+function addFileToAttachFile(e,files){
+    for (var i = 0; i < files.length; i++) {
+        var file = files[i];
+        if (file.type.indexOf("image") != -1) {
+            var date = new Date();
+            var filename = 'clipboard-'
+                + date.getFullYear()
+                + ('0' + (date.getMonth() + 1)).slice(-2)
+                + ('0' + date.getDate()).slice(-2)
+                + ('0' + date.getHours()).slice(-2)
+                + ('0' + date.getMinutes()).slice(-2)
+                + '-' + randomKey(5).toLocaleLowerCase()
+                + '.' + file.name.split('.').pop();
+
+            // get input file in the closest form
+            var inputEl = $('form').find('input:file.filedrop');
+            handleFileDropEvent.target = e.target;
+            addFile(inputEl, new File([file], filename, {type: file.type}), true);
+            console.log(addFile.nextAttachmentId);
+        }
+    }
 }
 
 function copyAttachmentURL(id) {
