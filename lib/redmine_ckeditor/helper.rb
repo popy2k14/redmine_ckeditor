@@ -12,11 +12,20 @@ module RedmineCkeditor
         #{plugin_script}
 
         CKEDITOR.on("instanceReady", function(event) {
-          var editor = event.editor;
-          var textarea = document.getElementById(editor.name);
+          let editor = event.editor;
+          let textarea = document.getElementById(editor.name);
+
           editor.on("change", function() {
             textarea.value = editor.getSnapshot();
           });
+
+          let iframe_contaner=$(editor.element.getNext())[0].find("iframe")
+          doc=$(iframe_contaner.$).contents().find(".wiki")
+          setTimeout(function() {
+            $(doc).on("paste", copyImageFromClipboardCKEditor);
+            $(doc).on("drop", copyImageFromDrop);
+          },2000)
+
         });
 
         $(window).on("beforeunload", function() {
@@ -34,11 +43,7 @@ module RedmineCkeditor
         setTimeout(function() {
           addInlineAttachmentMarkupOrg = addInlineAttachmentMarkup;
           addInlineAttachmentMarkup = addInlineAttachmentMarkupCKEditor;
-          $('iframe').contents().find('.wiki').on("paste", copyImageFromClipboardCKEditor);
-          $('iframe').contents().find('.wiki').on("drop", copyImageFromDrop);
-
           $('.icon-download').each(function(){
-
             m = $(this).attr('href').match(new RegExp('/attachments/download/(.+)/'));
             if(m) {
               a_tag = $('<a class="icon-only icon-copy" title="copy" href="/attachments/download/'+m[1]+
@@ -47,13 +52,16 @@ module RedmineCkeditor
              }
           });
         }, 2000);
+
+
+
         $(document).on("click", ".cke_button__source", function(){
+
           setTimeout(function() {
             $('iframe').contents().find('.wiki').on("paste", copyImageFromClipboardCKEditor);
-          }, 2000);
-          setTimeout(function() {
             $('iframe').contents().find('.wiki').on("drop", copyImageFromDrop);
           }, 2000);
+
         });
       EOT
     end
