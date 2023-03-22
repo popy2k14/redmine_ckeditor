@@ -21,11 +21,8 @@ module RedmineCkeditor
 
           let iframe_contaner=$(editor.element.getNext())[0].find("iframe")
           doc=$(iframe_contaner.$).contents().find(".wiki")
-          setTimeout(function() {
-            $(doc).on("paste", copyImageFromClipboardCKEditor);
-            $(doc).on("drop", copyImageFromDrop);
-          },2000)
-
+          $(doc).on("paste", copyImageFromClipboardCKEditor);
+          $(doc).on("drop", copyImageFromDrop);
         });
 
         $(window).on("beforeunload", function() {
@@ -49,7 +46,7 @@ module RedmineCkeditor
               a_tag = $('<a class="icon-only icon-copy" title="copy" href="/attachments/download/'+m[1]+
                         '" onclick="copyAttachmentURL('+m[1]+');return false;"></a>');
               $(this).before(a_tag[0]);
-             }
+            }
           });
         }, 2000);
 
@@ -58,8 +55,8 @@ module RedmineCkeditor
         $(document).on("click", ".cke_button__source", function(){
 
           setTimeout(function() {
-            $('iframe').contents().find('.wiki').on("paste", copyImageFromClipboardCKEditor);
-            $('iframe').contents().find('.wiki').on("drop", copyImageFromDrop);
+          //  $('iframe').contents().find('.wiki').on("paste", copyImageFromClipboardCKEditor);
+          //  $('iframe').contents().find('.wiki').on("drop", copyImageFromDrop);
           }, 2000);
 
         });

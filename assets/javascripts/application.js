@@ -1288,6 +1288,7 @@ function addInlineAttachmentMarkupCKEditor(file) {
             }
 
             if (pasteImageThis) {
+
                 var base_url = $('a.home').prop('href');
                 var img_text = '<img src="' + base_url + 'attachments/download/' + attachmentFileID + '" />'
 
@@ -1303,6 +1304,7 @@ function addInlineAttachmentMarkupCKEditor(file) {
 }
 
 function addFileToAttachFile(e,files){
+
     for (var i = 0; i < files.length; i++) {
         var file = files[i];
         if (file.type.indexOf("image") != -1) {
