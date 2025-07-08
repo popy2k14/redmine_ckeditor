@@ -50,16 +50,49 @@ module RedmineCkeditor
           });
         }, 2000);
 
+        function rebindCKEditorPasteEventsForAllInstances() {
+          const instanceKeys = Object.keys(CKEDITOR.instances);
+          if (instanceKeys.length === 0) return;
 
+          instanceKeys.forEach(editorName => {
+            const editor = CKEDITOR.instances[editorName];
+            if (!editor) return;
 
-        $(document).on("click", ".cke_button__source", function(){
+            const iframe = $(editor.container.$).find('iframe.cke_wysiwyg_frame');
+            if (!iframe.length) return;
 
-          setTimeout(function() {
-          //  $('iframe').contents().find('.wiki').on("paste", copyImageFromClipboardCKEditor);
-          //  $('iframe').contents().find('.wiki').on("drop", copyImageFromDrop);
-          }, 2000);
+            const doc = iframe[0].contentDocument || iframe[0].contentWindow.document;
+            if (!doc) return;
 
-        });
+            const wikiElem = $(doc).find(".wiki");
+            if (!wikiElem.length) return;
+
+            if (typeof copyImageFromClipboardCKEditor !== 'function') return;
+            if (typeof copyImageFromDrop !== 'function') return;
+            if (typeof addInlineAttachmentMarkupCKEditor !== 'function') return;
+
+            const events = $._data(wikiElem[0], 'events') || {};
+            const hasPaste = events.paste && events.paste.some(e => e.handler === copyImageFromClipboardCKEditor);
+            const hasDrop = events.drop && events.drop.some(e => e.handler === copyImageFromDrop);
+
+            if (!hasPaste) {
+              wikiElem.on("paste", copyImageFromClipboardCKEditor);
+            }
+
+            if (!hasDrop) {
+              wikiElem.on("drop", copyImageFromDrop);
+            }
+
+            if (window.addInlineAttachmentMarkup !== addInlineAttachmentMarkupCKEditor) {
+              addInlineAttachmentMarkup = addInlineAttachmentMarkupCKEditor;
+            }
+          });
+        }
+
+        // check every 200ms if paste and drop function is binded, otherwise bind it
+        // this is helpfull if other plugins like redmine_issue_templates reloads parts of the html
+        setInterval(rebindCKEditorPasteEventsForAllInstances, 250);
+
       EOT
     end
   end
