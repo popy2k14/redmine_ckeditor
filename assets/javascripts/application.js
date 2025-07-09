@@ -1289,8 +1289,7 @@ function addInlineAttachmentMarkupCKEditor(file) {
 
             if (pasteImageThis) {
 
-                var base_url = $('a.home').prop('href');
-                var img_text = '<img src="' + base_url + 'attachments/download/' + attachmentFileID + '" />'
+                var img_text = '<img src="/attachments/download/' + attachmentFileID + '" />'
 
                 var dt = new DataTransfer();
                 dt.items.add(img_text, 'text/html');
